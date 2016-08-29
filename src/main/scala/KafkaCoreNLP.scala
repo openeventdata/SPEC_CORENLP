@@ -65,9 +65,9 @@ object KafkaCoreNLP {
       producer
     }
 
-//    val gson = SharedSingleton{
-//      new Gson()
-//    }
+    val gson = SharedSingleton{
+      new Gson()
+    }
 
 
     try{
@@ -78,9 +78,9 @@ object KafkaCoreNLP {
           // For English
           val obj = ParseAndDumpToMongoDB.ExtractsDocInfo(x, shift_Reduce, "ENG")
 
-//
-//
-          val message = new ProducerRecord[String, String]("petrarch", null, obj.toString)
+          val messageStr = gson.get.toJson(obj)
+
+          val message = new ProducerRecord[String, String]("petrarch", null, messageStr)
           kafka_producer.get.send(message)
           (null , obj)
 
