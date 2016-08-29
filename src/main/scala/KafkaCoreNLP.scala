@@ -33,7 +33,7 @@ object KafkaCoreNLP {
 
       .setSparkHome(sparkHome)
       .setAppName("KafkaCoreNLP")
-      .set("spark.cores.max", "40")
+      .set("spark.executor.memory", "8g")
       .setJars(Seq(System.getProperty("user.dir") + "/target/scala-2.10/TestSpark-assembly-1.0.jar"))
         .set("spark.akka.heartbeat.interval", "100")
 
@@ -65,9 +65,9 @@ object KafkaCoreNLP {
       producer
     }
 
-//    val gson = SharedSingleton{
-//      new Gson()
-//    }
+    //val gson = SharedSingleton{
+    //  new Gson()
+    //}
 
 
     try{
@@ -80,7 +80,10 @@ object KafkaCoreNLP {
 
 //
 //
-          val message = new ProducerRecord[String, String]("petrarch", null, obj.toString)
+          //val messageStr = gson.get.toJson(obj)
+
+          val messageStr = new Gson().toJson(obj).toString()
+          val message = new ProducerRecord[String, String]("petrarch", null, messageStr)
           kafka_producer.get.send(message)
           (null , obj)
 

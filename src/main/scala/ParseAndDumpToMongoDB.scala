@@ -17,7 +17,7 @@ import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation
 import scala.collection.JavaConversions._
 import scala.xml.XML._
 
-object ParseAndDumpToMongoDB {
+object ParseAndDumpToMongoDB extends  serializable{
 
   def getPropertyForEnglish(enable_Shift_reduce_parser: Boolean): Properties = {
 
