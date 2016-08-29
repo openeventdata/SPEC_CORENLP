@@ -327,7 +327,7 @@ object ParseAndDumpToMongoDB extends  serializable{
     builder += "doc_id" -> doc_id
     builder += "head_line" -> headLine
     builder += "date_line" -> dateLine
-    builder += "sentences" -> parse_sentence
+    builder += "sentences" -> parse_sentence.toArray
     builder += "corref" -> DCOREF
 
     builder.result()
