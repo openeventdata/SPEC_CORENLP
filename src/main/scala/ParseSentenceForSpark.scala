@@ -30,11 +30,11 @@ object ParseSentenceForSpark {
 
     //English
     //val p_sentences = sc.textFile("hdfs://dmlhdpc10:9000/ENG/APW/*.xml", 250)
-    //val p_sentences = sc.textFile("hdfs://dmlhdpc10:9000/ENG/APW/apw_eng_200812_hadoop.xml", 200)
+    val p_sentences = sc.textFile("hdfs://dmlhdpc10:9000/ENG/APW/apw_eng_200812_hadoop.xml", 200)
 
     //Spanish
     //val p_sentences = sc.textFile("hdfs://dmlhdpc10:9000/ESP/AFP/afp_spa_19941*.xml", 200)
-    val p_sentences = sc.textFile("hdfs://dmlhdpc10:9000/ESP/XIN/*.xml")
+    //val p_sentences = sc.textFile("hdfs://dmlhdpc10:9000/ESP/XIN/*.xml")
 
 
     //Arabic
@@ -48,8 +48,8 @@ object ParseSentenceForSpark {
       val shift_Reduce = true
       val result = p_sentences.filter(x => !x.trim.isEmpty).map{
         x =>
-          // For English
-          val obj = ParseAndDumpToMongoDB.ExtractsDocInfo(x, shift_Reduce, "ESP")
+          // For English or Spanish
+          val obj = ParseAndDumpToMongoDB.ExtractsDocInfo(x, shift_Reduce, "ENG")
           (null , obj)
 
           /*

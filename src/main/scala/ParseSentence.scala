@@ -2,6 +2,7 @@
  * Created by root on 10/8/15.
  */
 
+import java.lang.StringBuilder
 import java.util.Properties
 
 import com.mongodb.casbah.MongoClient
@@ -96,6 +97,61 @@ object ParseSentence {
     }
   }
 
+
+  def getNERDetails(sentence: String):String = {
+
+    try {
+      val sent = new Annotation(sentence)
+      pipeline.annotate(sent)
+      val tokens = sent.get(classOf[SentencesAnnotation])
+        .head
+        .get(classOf[TokensAnnotation])
+
+      var previousNERType = ""
+
+      val NERString = new StringBuilder()
+
+        for (a <- tokens)
+        {
+          var currentNERType = a.ner()
+
+          if (!"O".equals(a.ner()))
+          {
+            val textValue = a.value().replaceAll(",", "").replaceAll("$", "")
+            if (!previousNERType.equals(currentNERType)) {
+              NERString.append("##")
+              NERString.append(a.ner() + ":" + textValue)
+            }
+            else
+              NERString.append(" " + textValue)
+          }
+          else
+            NERString.append("##")
+          previousNERType = currentNERType
+        }
+
+      NERString.toString.split("##").filter(x => !x.isEmpty).
+        map{
+        x =>
+          val nerSplit = x.split(':')
+          (nerSplit(0), nerSplit(1))
+      }.groupBy(x => x._1)
+        .map { kv =>
+          val key = kv._1
+          val value = kv._2
+          val v = value.map(x => x._2).mkString("|")
+          (key, v)
+
+        }.toList.mkString(",")
+    } catch{
+      case e:Exception => e.printStackTrace()
+        print(sentence)
+        ""
+    }
+  }
+
+
+
   def getLEMMA(sentence: String):String = {
     val sent = new Annotation(sentence)
     pipeline.annotate(sent)
@@ -153,7 +209,12 @@ object ParseSentence {
 
   def main (args: Array[String]){
 
-    print(parseAndStoreSentenceToMongoDB("I am rakib"))
+    //print(getPennParseTree("Donald Trump helps Hilary Clinton to win the election at United States of America."))
+    print(getPennParseTree("Obama vowed again on Sunday to help France hunt down the perpetrators of the attacks."))
+
+    //print(getNER("Jaguar Land Rover has about 16,000 employees in the U.K. and spends 400 million pounds a year on research and development and 2.5 billion pounds on suppliers."))
+    //print("\n\n\n")
+    //print(getNERDetails("Jaguar Land Rover has about 16,000 employees in the U.K. and spends 400 million pounds a year on research and development and 2.5 billion pounds on suppliers."))
 
   }
 }
